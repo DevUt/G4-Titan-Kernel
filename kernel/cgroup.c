@@ -60,6 +60,8 @@
 #include <linux/poll.h>
 #include <linux/flex_array.h> /* used in cgroup_attach_task */
 #include <linux/kthread.h>
+#include <linux/binfmts.h>
+#include <linux/cpu_input_boost.h>
 
 #include <linux/atomic.h>
 
@@ -2198,6 +2200,15 @@ retry_find_task:
 	}
 
 	ret = cgroup_attach_task(cgrp, tsk, threadgroup);
+
+	/* This covers boosting for app launches and app transitions */
+	if (!ret && !threadgroup &&
+		!memcmp(of->kn->parent->name, "top-app", sizeof("top-app")) &&
+		is_zygote_pid(tsk->parent->pid))
+	cpu_input_boost_kick();
+
+	put_task_struct(tsk);
+	goto out_unlock_threadgroup;
 
 	threadgroup_unlock(tsk);
 
