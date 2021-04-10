@@ -760,10 +760,10 @@ int msm_post_event(struct v4l2_event *event, int timeout)
 		spin_lock_irqsave(&vdev->fh_lock, flags);
 		fh = (struct v4l2_fh *)vdev->fh_list.next;
 		if(!msm_event_subscribed(fh, event->type, event->id)) {
-			pr_err("%s :%d v4l2 events not subscribed yet! type(0x%x) id(0x%x)\n",
+			pr_info("%s :%d v4l2 events not subscribed yet! type(0x%x) id(0x%x) -spoofed don't return -EIO\n",
 				__func__, __LINE__, event->type, event->id);
 			spin_unlock_irqrestore(&vdev->fh_lock, flags);
-			return -EIO; //-EAGAIN; HAL to reopen camera repeatedly
+			//return -EIO; //-EAGAIN; HAL to reopen camera repeatedly //This spoof 
 		}
 		spin_unlock_irqrestore(&vdev->fh_lock, flags);
 		if(BIT_ISSET(msm_debug, LGE_DEBUG_BLOCK_POST_EVENT))
