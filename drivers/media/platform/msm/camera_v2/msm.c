@@ -762,7 +762,7 @@ int msm_post_event(struct v4l2_event *event, int timeout)
 		if(!msm_event_subscribed(fh, event->type, event->id)) {
 			pr_info("%s :%d v4l2 events not subscribed yet! type(0x%x) id(0x%x) -spoofed don't return -EIO\n",
 				__func__, __LINE__, event->type, event->id);
-			spin_unlock_irqrestore(&vdev->fh_lock, flags);
+			// spin_unlock_irqrestore(&vdev->fh_lock, flags); // Do not unlock here, We spoof here and unlock it outside the loop // This approach so even if we fix unsubscribed events in future we don't have to change the spoof 
 			//return -EIO; //-EAGAIN; HAL to reopen camera repeatedly //This spoof 
 		}
 		spin_unlock_irqrestore(&vdev->fh_lock, flags);
